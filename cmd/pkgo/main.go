@@ -3,16 +3,20 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/pkg/browser"
 	"github.com/urfave/cli/v2"
+	"github.com/yuzuy/pkgo/utils"
 )
 
 const pkgGoDevUrl = "https://pkg.go.dev/"
 
 func main() {
+	pkgo()
+}
+
+func pkgo() {
 	app := cli.NewApp()
 	app.Name = "pkgo"
 	app.Usage = "Open the document for Go package"
@@ -20,7 +24,7 @@ func main() {
 	app.Action = func(c *cli.Context) error {
 		if 0 < c.NArg() {
 			pkg := c.Args().Get(0)
-			exist, err := isExistPage(pkgGoDevUrl + pkg)
+			exist, err := utils.IsExistPage(pkgGoDevUrl + pkg)
 			if err != nil {
 				return err
 			}
@@ -30,7 +34,7 @@ func main() {
 				}
 				return nil
 			}
-			exist, err = isExistPage(pkgGoDevUrl + "golang.org/x/" + pkg)
+			exist, err = utils.IsExistPage(pkgGoDevUrl + "golang.org/x/" + pkg)
 			if err != nil {
 				return err
 			}
@@ -40,7 +44,7 @@ func main() {
 				}
 				return nil
 			}
-			exist, err = isExistPage(pkgGoDevUrl + "github.com/" + pkg)
+			exist, err = utils.IsExistPage(pkgGoDevUrl + "github.com/" + pkg)
 			if err != nil {
 				return err
 			}
@@ -62,15 +66,4 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func isExistPage(url string) (bool, error) {
-	res, err := http.Get(url)
-	if err != nil {
-		return false, err
-	}
-	if res.StatusCode == 404 {
-		return false, nil
-	}
-	return true, nil
 }
