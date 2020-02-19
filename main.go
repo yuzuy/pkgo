@@ -15,7 +15,7 @@ const pkgGoDevUrl = "https://pkg.go.dev/"
 func main() {
 	app := cli.NewApp()
 	app.Name = "pkgo"
-	app.Usage = "Find package and open the document"
+	app.Usage = "Open the document for Go package"
 
 	app.Action = func(c *cli.Context) error {
 		if 0 < c.NArg() {
