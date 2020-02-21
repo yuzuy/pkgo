@@ -4,17 +4,14 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/pkg/browser"
 	"github.com/urfave/cli/v2"
+	"github.com/yuzuy/pkgo/flags"
 	"github.com/yuzuy/pkgo/utils"
 )
 
-const (
-	pkgGoDevURL = "https://pkg.go.dev/"
-	githubURL   = "https://github.com/"
-)
+const pkgGoDevURL = "https://pkg.go.dev/"
 
 func main() {
 	pkgo()
@@ -31,6 +28,11 @@ func pkgo() {
 			Aliases: []string{"r"},
 			Usage:   "Open the GitHub repository",
 		},
+		&cli.BoolFlag{
+			Name:    "official",
+			Aliases: []string{"o"},
+			Usage:   "Open document in golang.org",
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -43,11 +45,18 @@ func pkgo() {
 			if exist {
 				url := pkgGoDevURL + pkg
 				if c.IsSet("repo") {
-					url = githubURL + "golang/go/tree/master/src/" + pkg
+					url = "https://github.com/golang/go/tree/master/src/" + pkg
+				}
+				if c.IsSet("official") {
+					url = "https://golang.org/pkg/" + pkg
 				}
 				if err := browser.OpenURL(url); err != nil {
 					return err
 				}
+				return nil
+			}
+			if c.IsSet("official") {
+				fmt.Println("Cannot find this package")
 				return nil
 			}
 			exist, err = utils.IsExistPage(pkgGoDevURL + "golang.org/x/" + pkg)
@@ -57,16 +66,7 @@ func pkgo() {
 			if exist {
 				url := pkgGoDevURL + "golang.org/x/" + pkg
 				if c.IsSet("repo") {
-					path := strings.Split(pkg, "/")
-					if 1 < len(path) {
-						var pathStr string
-						for _, v := range path[1:] {
-							pathStr += "/" + v
-						}
-						url = fmt.Sprintf("%sgolang/%s/tree/master%s", githubURL, path[0], pathStr)
-					} else {
-						url = githubURL + "golang/" + pkg
-					}
+					url = flags.TidyUpURL(pkg, "sub")
 				}
 				if err := browser.OpenURL(url); err != nil {
 					return err
@@ -80,7 +80,7 @@ func pkgo() {
 			if exist {
 				url := pkgGoDevURL + "github.com/" + pkg
 				if c.IsSet("repo") {
-					url = githubURL + pkg
+					url = flags.TidyUpURL(pkg, "external")
 				}
 				if err := browser.OpenURL(url); err != nil {
 					return err
