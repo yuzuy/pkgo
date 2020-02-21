@@ -3,13 +3,16 @@ Open the document for Go package by CLI
 
 ## Installation & Updating
 ### Install
+You can use pkgo the on only macOS
 ```
-go get github.com/yuzuy/pkgo
+brew tap yuzuy/pkgo
+
+brew install pkgo
 ```
 
 ### Update
 ```
-go get -u github.com/yuzuy/pkgo
+brew upgrade pkgo
 ```
 
 ## Usage
