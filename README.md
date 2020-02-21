@@ -24,3 +24,8 @@ pkgo crypto/bcrypt // Open "https://pkg.go.dev/golang.org/x/crypto/bcrypt"
 pkgo yuzuy/pkgo    // Open "https://pkg.go.dev/github.com/yuzuy/pkgo"
 ```
 
+### Flags
+```
+pkgo --repo context // Open "https://github.com/golang/go/context"
+```
+

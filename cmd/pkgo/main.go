@@ -64,6 +64,8 @@ func pkgo() {
 							pathStr += "/" + v
 						}
 						url = fmt.Sprintf("%sgolang/%s/tree/master%s", githubURL, path[0], pathStr)
+					} else {
+						url = githubURL + "golang/" + pkg
 					}
 				}
 				if err := browser.OpenURL(url); err != nil {
