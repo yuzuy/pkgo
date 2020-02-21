@@ -31,7 +31,7 @@ func pkgo() {
 		&cli.BoolFlag{
 			Name:    "official",
 			Aliases: []string{"o"},
-			Usage:   "Open document in golang.org",
+			Usage:   "Open the document in golang.org",
 		},
 	}
 

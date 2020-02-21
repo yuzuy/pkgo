@@ -33,3 +33,10 @@ pkgo -r crypto/bcrypt // Open "https://github.com/golang/crypto/tree/master/bcry
 
 pkgo -r yuzuy/pkgo    // Open "https://github.com/yuzuy/pkgo"
 ```
+
+#### --official, -o - Open the document in golang.org
+```
+pkgo --official context // Open "https://golang.org/pkg/context/"
+
+pkgo -o net/http        // Open "https://golang.org/pkg/net/http/"
+```
