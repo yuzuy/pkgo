@@ -20,7 +20,7 @@ func main() {
 func pkgo() {
 	app := cli.NewApp()
 	app.Name = "pkgo"
-	app.Usage = "Open the document for Go package"
+	app.Usage = "pkgo [package name]"
 
 	app.Flags = []cli.Flag{
 		&cli.BoolFlag{
