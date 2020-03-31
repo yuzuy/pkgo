@@ -2,22 +2,24 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/pkg/browser"
 	"github.com/urfave/cli/v2"
-	"github.com/yuzuy/pkgo/flags"
-	"github.com/yuzuy/pkgo/utils"
+	"github.com/yuzuy/pkgo"
 )
 
-const pkgGoDevURL = "https://pkg.go.dev/"
+const docURL = "https://pkg.go.dev/"
 
 func main() {
-	pkgo()
+	if err := run(); err != nil {
+		fmt.Println("pkgo: " + err.Error())
+		os.Exit(1)
+	}
+	os.Exit(0)
 }
 
-func pkgo() {
+func run() error {
 	app := cli.NewApp()
 	app.Name = "pkgo"
 	app.Usage = "pkgo [package name]"
@@ -38,12 +40,13 @@ func pkgo() {
 	app.Action = func(c *cli.Context) error {
 		if 0 < c.NArg() {
 			pkg := c.Args().Get(0)
-			exist, err := utils.IsExistPage(pkgGoDevURL + pkg)
+
+			exist, err := pkgo.IsExistPage(docURL + pkg)
 			if err != nil {
 				return err
 			}
 			if exist {
-				url := pkgGoDevURL + pkg
+				url := docURL + pkg
 				if c.IsSet("repo") {
 					url = "https://github.com/golang/go/tree/master/src/" + pkg
 				}
@@ -59,28 +62,30 @@ func pkgo() {
 				fmt.Println("Cannot find this package")
 				return nil
 			}
-			exist, err = utils.IsExistPage(pkgGoDevURL + "golang.org/x/" + pkg)
+
+			exist, err = pkgo.IsExistPage(docURL + "golang.org/x/" + pkg)
 			if err != nil {
 				return err
 			}
 			if exist {
-				url := pkgGoDevURL + "golang.org/x/" + pkg
+				url := docURL + "golang.org/x/" + pkg
 				if c.IsSet("repo") {
-					url = flags.TidyUpURL(pkg, "sub")
+					url = pkgo.TidyUpURL(pkg, "sub")
 				}
 				if err := browser.OpenURL(url); err != nil {
 					return err
 				}
 				return nil
 			}
-			exist, err = utils.IsExistPage(pkgGoDevURL + "github.com/" + pkg)
+
+			exist, err = pkgo.IsExistPage(docURL + "github.com/" + pkg)
 			if err != nil {
 				return err
 			}
 			if exist {
-				url := pkgGoDevURL + "github.com/" + pkg
+				url := docURL + "github.com/" + pkg
 				if c.IsSet("repo") {
-					url = flags.TidyUpURL(pkg, "external")
+					url = pkgo.TidyUpURL(pkg, "external")
 				}
 				if err := browser.OpenURL(url); err != nil {
 					return err
@@ -90,13 +95,12 @@ func pkgo() {
 			fmt.Println("Cannot find this package.")
 			return nil
 		}
-		if err := browser.OpenURL(pkgGoDevURL); err != nil {
+		if err := browser.OpenURL(docURL); err != nil {
 			return err
 		}
+
 		return nil
 	}
 
-	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
-	}
+	return app.Run(os.Args)
 }
